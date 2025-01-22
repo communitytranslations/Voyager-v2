@@ -10,6 +10,8 @@ __pycache__/
 
 # Distribution / packaging
 env_voyager_v2/
+global.json
+dotnet-install.sh
 .Python
 build/
 develop-eggs/
