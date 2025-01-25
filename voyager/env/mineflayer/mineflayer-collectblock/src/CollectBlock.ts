@@ -67,15 +67,22 @@ async function collectAll(
                             );
                             // @ts-ignore
                         } else if (err.name === "NoItem") {
-                            const properties =
-                                bot.registry.blocksByName[closest.name];
-                            const leastTool = Object.keys(
-                                properties.harvestTools
-                            )[0];
+                            // Verifica que closest.name exista
+                            if (!closest.name) throw new Error("Block name is undefined");
+                            
+                            const properties = bot.registry.blocksByName[closest.name];
+                            if (!properties?.harvestTools) throw new Error("No harvest tools defined");
+
+                            // Convierte la clave a número
+                            const toolIds = Object.keys(properties.harvestTools);
+                            if (toolIds.length === 0) throw new Error("No tools available");
+                            const leastTool = parseInt(toolIds[0], 10);
+                            
+                            if (isNaN(leastTool)) throw new Error("Invalid tool ID");
                             const item = bot.registry.items[leastTool];
-                            bot.chat(
-                                `I need at least a ${item.name} to mine ${closest.name}!  Skip it!`
-                            );
+                            
+                            if (!item) throw new Error(`Tool ${leastTool} not found`);
+                            bot.chat(`I need at least a ${item.name} to mine ${closest.name}! Skip it!`);
                             return;
                         } else if (
                             // @ts-ignore
